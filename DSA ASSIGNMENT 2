@@ -1,0 +1,186 @@
+# ASSIGNMENT-2 DSA
+Q NO.1   Design a Python program that simulates a web
+server handling incoming requests using a queue.
+Model different types of requests with varying
+processing times and simulate their processing
+order.
+
+import time
+import queue
+import random
+from threading import Thread
+
+class WebServer:
+    def __init__(self):
+        self.request_queue = queue.Queue()
+
+    def handle_request(self, request_type):
+        processing_time = random.randint(1, 5)  # Simulating varying processing times
+        print(f"Processing {request_type} request. Time required: {processing_time} seconds")
+        time.sleep(processing_time)
+        print(f"{request_type} request processed.")
+
+    def simulate_web_server(self):
+        while True:
+            if not self.request_queue.empty():
+                request_type = self.request_queue.get()
+                self.handle_request(request_type)
+            else:
+                print("No requests in the queue. Waiting...")
+                time.sleep(1)
+
+def generate_requests(web_server, num_requests):
+    request_types = ["GET", "POST", "PUT", "DELETE"]
+
+    for _ in range(num_requests):
+        request_type = random.choice(request_types)
+        web_server.request_queue.put(request_type)
+        time.sleep(random.uniform(0.1, 0.5))  # Simulating random intervals between requests
+
+if __name__ == "__main__":
+    web_server = WebServer()
+
+    web_server_thread = Thread(target=web_server.simulate_web_server, daemon=True)
+    web_server_thread.start()
+
+    num_requests = 10
+    generate_requests(web_server, num_requests)
+
+    # Wait for all requests to be processed
+    web_server_thread.join()
+
+    print("Simulation complete.")
+
+Q NO , 2 Design a Python program that simulates a web
+server handling incoming requests using a queue.
+Model different types of requests with varying
+processing times and simulate their processing
+order.
+
+
+Dynamic Size: If the size of the queue is expected to change frequently, and the amount of memory needed for the queue is uncertain or can be very large, a linked list implementation may be preferred. Linked lists allow for dynamic resizing without the need to pre-allocate a fixed amount of memory.
+
+Constant-Time Insertion/Deletion: Insertion and deletion operations at the beginning or end of a linked list can be done in constant time, O(1). This is advantageous for enqueue and dequeue operations in a queue, making a linked list implementation efficient for these scenarios.
+
+Frequent Insertions and Deletions: If your application involves frequent enqueue and dequeue operations with a varying size, a linked list can be a good choice as it avoids the need to shift elements as in an array-based implementation.
+
+Array Implementation for a Queue:
+Fixed Size: If the maximum size of the queue is known and remains constant, an array-based implementation might be more suitable. Arrays have a fixed size, and the memory is allocated contiguously, making it more memory-efficient in scenarios where the size of the queue is predetermined.
+
+Random Access: If there is a need for random access to elements (accessing elements by index), an array-based implementation is more suitable. This is not a common requirement for queues, but if such access is needed, an array might be a better choice.
+
+Cache Locality: Arrays can have better cache locality compared to linked lists. This can lead to better performance in scenarios where the elements of the queue are frequently accessed in sequence.
+
+Simplicity: Array-based implementations can be simpler to implement and understand, especially for scenarios where a fixed-size queue is appropriate.
+
+
+
+
+
+  Q NO 3Discuss the time complexity of enqueue and
+dequeue operations in a basic queue. How can you
+optimize these operations for specific use cases?
+
+
+Time Complexity:
+Enqueue Operation (Insertion):
+
+Time Complexity: O(1)
+Enqueuing an element involves adding it to the end of the queue. In an array, this operation can be performed in constant time since we can directly access the end of the array using the index.
+Dequeue Operation (Deletion):
+
+Time Complexity: O(n)
+Dequeuing an element involves removing it from the front of the queue. In an array, this operation requires shifting all remaining elements to fill the gap left by the dequeued element. This results in a time complexity of O(n), where n is the number of elements in the queue.
+Optimization Strategies:
+Circular Queue:
+
+To optimize the dequeue operation, a circular queue can be implemented. In a circular queue, when the front pointer reaches the end of the array, it wraps around to the beginning. This eliminates the need to shift elements, making the dequeue operation O(1) instead of O(n).
+Dynamic Array (Resizable Queue):
+
+If the size of the queue is expected to change frequently, consider using a dynamic array or a linked list. Dynamic arrays can be resized when needed, allowing for more efficient enqueue and dequeue operations without the need to shift elements.
+Amortized Analysis:
+
+While individual enqueue and dequeue operations in an array-based queue have specific time complexities, it's important to consider amortized analysis. If a series of operations is performed, the average time complexity per operation may be lower than the worst-case time complexity. Dynamic array implementations often use amortized analysis to show that over a series of operations, the average cost remains low.
+Use a Linked List:
+
+If frequent insertions and deletions are expected, a linked list-based implementation of a queue may be more suitable. In a linked list, both enqueue and dequeue operations can be performed in constant time, O(1).
+Double-Ended Queue (Deque):
+
+If the application requires insertion and deletion at both ends of the queue, a double-ended queue (deque) might be a better choice. Deques support efficient insertion and deletion at both the front and rear, offering flexibility for specific use cases
+
+
+
+
+
+Q NO 4..: How can you use two stacks to implement a
+queue? Provide a step-by-step explanation of the
+enqueue and dequeue operations in this scenario.
+
+Enqueue Operation:
+Step: Push the Element onto Stack 1 (enqueue):
+
+When you want to enqueue (add) an element to the queue, push the element onto Stack 1.
+plaintext
+Copy code
+Stack 1: [3]
+Stack 2: []
+Step: Enqueue More Elements:
+
+Continue pushing elements onto Stack 1 for each enqueue operation.
+plaintext
+Copy code
+Stack 1: [3, 5, 7]
+Stack 2: []
+Dequeue Operation:
+Step: Check if Stack 2 is Empty:
+
+If Stack 2 is empty, transfer all elements from Stack 1 to Stack 2. This is where the order of elements is reversed.
+plaintext
+Copy code
+Stack 1: []
+Stack 2: [7, 5, 3]
+Step: Pop Element from Stack 2 (dequeue):
+
+Pop the top element from Stack 2. This element corresponds to the front of the queue.
+plaintext
+Copy code
+Stack 1: []
+Stack 2: [7, 5]
+Dequeued Element: 3
+Step: Dequeue More Elements:
+
+Continue dequeuing elements from Stack 2 as needed.
+plaintext
+Copy code
+Stack 1: []
+Stack 2: [7]
+Dequeued Elements: 5, 3
+Enqueue More Elements After Dequeue:
+Step: Continue Enqueuing:
+
+You can continue enqueuing elements onto Stack 1 even after dequeue operations.
+plaintext
+Copy code
+Stack 1: [2, 4, 6]
+Stack 2: [7]
+Step: Enqueue Operations Do Not Affect Stack 2:
+
+Enqueue operations do not affect Stack 2. It only serves as a temporary holder for elements during dequeue operations.
+plaintext
+Copy code
+Stack 1: [2, 4, 6, 8, 10]
+Stack 2: [7]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
